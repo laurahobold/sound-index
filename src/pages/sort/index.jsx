@@ -62,8 +62,9 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
     function handleSort(preferred) {
         if (!Array.isArray(queue) || queue.length === 0) return;
         const pair = queue[0];
-        if (!Array.isArray(pair) || pair.length !== 2) return;
-        const [left, right] = pair;
+        if (!Array.isArray(pair) || pair.length < 2) return;
+        const left = pair[0];
+        const right = pair[1];
         if (!left || !right) return;
 
         const winner = preferred === "left" ? left : right;
@@ -86,11 +87,17 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
     }
 
     // Render loading if no valid pair
-    if (!Array.isArray(queue) || queue.length === 0 || !Array.isArray(queue[0]) || queue[0].length !== 2) {
+    if (!Array.isArray(queue) || queue.length === 0) {
         return <Container>Loading sorting game...</Container>;
     }
 
-    const [left, right] = queue[0];
+    const pair = queue[0];
+    const left = Array.isArray(pair) ? pair[0] : null;
+    const right = Array.isArray(pair) ? pair[1] : null;
+
+    if (!left || !right) {
+        return <Container>Preparing matchup...</Container>;
+    }
 
     return (
         <Container>
@@ -99,12 +106,8 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
                 <ProgressFill style={{ width: `${progress}%` }} />
             </ProgressBar>
 
-            <Button onClick={() => handleSort("left")}>
-                {left.name}
-            </Button>
-            <Button onClick={() => handleSort("right")}>
-                {right.name}
-            </Button>
+            <Button onClick={() => handleSort("left")}>{left.name}</Button>
+            <Button onClick={() => handleSort("right")}>{right.name}</Button>
 
             <p style={{ marginTop: "1rem" }}>{progress}% completed</p>
         </Container>
