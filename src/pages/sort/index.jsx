@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -32,34 +33,48 @@ const ProgressFill = styled.div`
     transition: width 0.3s ease;
 `;
 
-export default function SortPage({ sortingStack, setSortingStack, rankedTracks = [], setRankedTracks }) {
+export default function SortPage({ sortingStack, setSortingStack, rankedTracks, setRankedTracks }) {
     const navigate = useNavigate();
+    const [queue, setQueue] = useState([]);
+    const [roundTotal, setRoundTotal] = useState(0);
 
-    const total = sortingStack.length + rankedTracks.length;
-    const remaining = sortingStack.length;
-    const progress = total > 0 ? Math.round(((total - remaining) / total) * 100) : 0;
+    useEffect(() => {
+        if (sortingStack.length > 1 && queue.length === 0) {
+            const initialQueue = [];
+            for (let i = 0; i < sortingStack.length; i++) {
+                for (let j = i + 1; j < sortingStack.length; j++) {
+                    initialQueue.push([sortingStack[i], sortingStack[j]]);
+                }
+            }
+            setQueue(initialQueue);
+            setRoundTotal(initialQueue.length);
+        }
+    }, [sortingStack]);
 
-    function handleSort(left, right, preferred) {
-        const nextStack = sortingStack.slice(2); // remove first 2
+    const progress = roundTotal > 0 ? Math.round(((roundTotal - queue.length) / roundTotal) * 100) : 0;
+
+    function handleSort(preferred) {
+        const [left, right] = queue[0];
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
 
-        nextStack.push(winner); // winner stays in pool
+        const updatedRankings = [...rankedTracks];
+        if (!updatedRankings.includes(winner)) updatedRankings.unshift(winner);
+        if (!updatedRankings.includes(loser)) updatedRankings.push(loser);
 
-        const updatedRanked = [...rankedTracks, loser];
-        setRankedTracks(updatedRanked);
+        setRankedTracks(updatedRankings);
+        const remainingQueue = queue.slice(1);
+        setQueue(remainingQueue);
 
-        if (nextStack.length === 1) {
-            // Only one song left — must be the top choice
-            setRankedTracks([...updatedRanked, nextStack[0]]);
+        if (remainingQueue.length === 0) {
             setSortingStack([]);
             navigate("/result");
-        } else {
-            setSortingStack(nextStack);
         }
     }
 
-    if (sortingStack.length < 2) return <Container>Loading tracks...</Container>;
+    if (queue.length === 0) return <Container>Loading sorting game...</Container>;
+
+    const [left, right] = queue[0];
 
     return (
         <Container>
@@ -68,12 +83,10 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks =
                 <ProgressFill style={{ width: `${progress}%` }} />
             </ProgressBar>
 
-            <Button onClick={() => handleSort(sortingStack[0], sortingStack[1], "left")}>
-                {sortingStack[0].name}
-            </Button>
-            <Button onClick={() => handleSort(sortingStack[0], sortingStack[1], "right")}>
-                {sortingStack[1].name}
-            </Button>
+            <Button onClick={() => handleSort("left")}>{left.name}</Button>
+            <Button onClick={() => handleSort("right")}>{right.name}</Button>
+
+            <p style={{ marginTop: "1rem" }}>{progress}% completed</p>
         </Container>
     );
 }
