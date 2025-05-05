@@ -7,7 +7,7 @@ import ResultPage from './pages/result';
 import { useEffect, useState } from 'react';
 
 const clientId = "YOUR_SPOTIFY_CLIENT_ID";
-const redirectUri = "https://yourapp.vercel.app/";
+const redirectUri = "https://rank-sorting-for-spotify.vercel.app/";
 const scopes = [
     "playlist-read-private",
     "playlist-modify-private",
