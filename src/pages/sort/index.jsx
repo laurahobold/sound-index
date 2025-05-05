@@ -88,8 +88,8 @@ export default function SortPage({ sortingStack, setSortingStack, setRankedTrack
         }
     }, [nextIndex, n, sortedList, setRankedTracks, setSortingStack, navigate]);
 
-    // Guard for loading
-    if (order.length < 2 || sortedList.length === 0) {
+    // Guard for loading or complete
+    if (order.length < 2 || sortedList.length === 0 || nextIndex >= n) {
         return <Container>Preparing sorting game...</Container>;
     }
 
@@ -97,21 +97,24 @@ export default function SortPage({ sortingStack, setSortingStack, setRankedTrack
     const mid = Math.floor((low + high) / 2);
     const compareTrack = sortedList[mid];
 
+    // additional guard to avoid undefined
+    if (!newTrack || !compareTrack) {
+        return <Container>Preparing matchup...</Container>;
+    }
+
     function handleChoice(choice) {
         if (nextIndex >= n) return;
 
         // Update bounds
+        const newLow = low;
+        const newHigh = choice === 'left' ? mid : high;
         if (choice === 'left') {
-            // User prefers newTrack over compareTrack => newTrack should come before => insert in [low, mid]
             setHigh(mid);
         } else {
-            // User prefers compareTrack => newTrack goes after => insert in [mid+1, high]
             setLow(mid + 1);
         }
 
         // Check if bounds converged
-        const newLow = choice === 'left' ? low : low;
-        const newHigh = choice === 'left' ? mid : high;
         if (newLow >= newHigh) {
             // Insert at position newLow
             const updated = [...sortedList];
