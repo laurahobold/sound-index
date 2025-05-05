@@ -39,7 +39,7 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
     const [roundTotal, setRoundTotal] = useState(0);
 
     useEffect(() => {
-        if (sortingStack.length > 1 && queue.length === 0) {
+        if (Array.isArray(sortingStack) && sortingStack.length > 1 && queue.length === 0) {
             const initialQueue = [];
             for (let i = 0; i < sortingStack.length; i++) {
                 for (let j = i + 1; j < sortingStack.length; j++) {
@@ -54,7 +54,7 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
     const progress = roundTotal > 0 ? Math.round(((roundTotal - queue.length) / roundTotal) * 100) : 0;
 
     function handleSort(preferred) {
-        if (!Array.isArray(queue[0])) return;
+        if (!Array.isArray(queue[0]) || queue[0].length !== 2) return;
         const [left, right] = queue[0];
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
@@ -73,7 +73,9 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
         }
     }
 
-    if (!Array.isArray(queue[0])) return <Container>Loading sorting game...</Container>;
+    if (!Array.isArray(queue[0]) || queue[0].length !== 2) {
+        return <Container>Loading sorting game...</Container>;
+    }
 
     const [left, right] = queue[0];
 

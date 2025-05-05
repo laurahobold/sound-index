@@ -47,11 +47,11 @@ export default function LoginPage({ token, setToken }) {
   useEffect(() => {
     // Check if token is already saved
     const savedToken = localStorage.getItem("spotify_token");
-    if (savedToken) {
+    if (savedToken && token === null) {
+      // Only restore token if not already logged in
       setToken(savedToken);
-      navigate("/pick");
-      return;
     }
+
 
     // Look for code and exchange for token
     const urlParams = new URLSearchParams(window.location.search);
