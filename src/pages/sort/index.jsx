@@ -54,6 +54,7 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
     const progress = roundTotal > 0 ? Math.round(((roundTotal - queue.length) / roundTotal) * 100) : 0;
 
     function handleSort(preferred) {
+        if (!Array.isArray(queue[0])) return;
         const [left, right] = queue[0];
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
@@ -72,7 +73,7 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
         }
     }
 
-    if (queue.length === 0) return <Container>Loading sorting game...</Container>;
+    if (!Array.isArray(queue[0])) return <Container>Loading sorting game...</Container>;
 
     const [left, right] = queue[0];
 
