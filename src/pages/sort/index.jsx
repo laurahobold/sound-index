@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -39,53 +39,66 @@ const ProgressFill = styled.div`
 
 export default function SortPage({ sortingStack, setSortingStack, rankedTracks, setRankedTracks }) {
     const navigate = useNavigate();
-    const [queue, setQueue] = useState([]);
+
+    // derive the queue of all unique pairs
+    const queue = useMemo(() => {
+        if (!Array.isArray(sortingStack) || sortingStack.length < 2) return [];
+        const pairs = [];
+        for (let i = 0; i < sortingStack.length; i++) {
+            for (let j = i + 1; j < sortingStack.length; j++) {
+                pairs.push([sortingStack[i], sortingStack[j]]);
+            }
+        }
+        return pairs;
+    }, [sortingStack]);
+
+    // current pair index
     const [idx, setIdx] = useState(0);
 
+    // always start at 0 when the queue changes
     useEffect(() => {
-        if (Array.isArray(sortingStack) && sortingStack.length > 1) {
-            const initialQueue = [];
-            for (let i = 0; i < sortingStack.length; i++) {
-                for (let j = i + 1; j < sortingStack.length; j++) {
-                    initialQueue.push([sortingStack[i], sortingStack[j]]);
-                }
-            }
-            setQueue(initialQueue);
-            setIdx(0);
-        }
-    }, [sortingStack]);
+        setIdx(0);
+    }, [queue]);
 
     const total = queue.length;
     const progress = total > 0 ? Math.round((idx / total) * 100) : 0;
 
-    function handleSort(preferred) {
-        const pair = queue[idx];
-        if (!Array.isArray(pair) || pair.length < 2) return;
-        const [left, right] = pair;
+    const handleSort = useCallback((preferred) => {
+        // guard against out-of-bounds
+        if (idx < 0 || idx >= queue.length) {
+            console.warn("Invalid index", idx, queue);
+            return;
+        }
+
+        const [left, right] = queue[idx] || [];
+        if (!left || !right) {
+            console.warn("Bad pair at idx", idx, queue[idx]);
+            return;
+        }
+
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
 
+        // update rankedTracks
         const updated = [...rankedTracks];
         if (!updated.find(t => t.uri === winner.uri)) updated.unshift(winner);
         if (!updated.find(t => t.uri === loser.uri)) updated.push(loser);
         setRankedTracks(updated);
 
-        const nextIdx = idx + 1;
-        if (nextIdx >= queue.length) {
+        // next or finish
+        if (idx + 1 >= total) {
             setSortingStack([]);
             navigate("/result");
         } else {
-            setIdx(nextIdx);
+            setIdx(idx + 1);
         }
-    }
+    }, [idx, queue, rankedTracks, setRankedTracks, setSortingStack, navigate, total]);
 
     if (queue.length === 0) {
         return <Container>Loading sorting game...</Container>;
     }
 
-    const pair = queue[idx] || [];
-    const left = pair[0];
-    const right = pair[1];
+    const [left, right] = queue[idx] || [];
     if (!left || !right) {
         return <Container>Preparing matchup...</Container>;
     }
