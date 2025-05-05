@@ -17,7 +17,7 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-export default function PickPage({ token, playlists, setPlaylists, setSelectedTracks, setSortingStack }) {
+export default function PickPage({ token, playlists, setPlaylists, setSelectedTracks, setSortingStack, setRankedTracks }) {
 		const navigate = useNavigate();
 
 		// Pull token from props or localStorage
@@ -53,10 +53,12 @@ export default function PickPage({ token, playlists, setPlaylists, setSelectedTr
 				.then(data => {
 						const tracks = data.items.map(i => i.track);
 						setSelectedTracks(tracks);
-						setSortingStack([...tracks]);
+						setSortingStack([...tracks]);       // Load into sorting stack
+						setRankedTracks([]);                // ✅ Clear any previous rankings
 						navigate("/sort");
 				});
 		}
+
 
 		return (
 				<Container>

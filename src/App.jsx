@@ -46,7 +46,8 @@ function App() {
           />
           <Route
               path="/pick"
-              element={<PickPage token={token} playlists={playlists} setPlaylists={setPlaylists} setSelectedTracks={setSelectedTracks} setSortingStack={setSortingStack} />}
+              element={<PickPage       setRankedTracks={setRankedTracks} // ✅ Pass this!
+                                        token={token} playlists={playlists} setPlaylists={setPlaylists} setSelectedTracks={setSelectedTracks} setSortingStack={setSortingStack} />}
           />
           <Route
               path="/sort"
