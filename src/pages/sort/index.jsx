@@ -40,10 +40,10 @@ const ProgressFill = styled.div`
 export default function SortPage({ sortingStack, setSortingStack, rankedTracks, setRankedTracks }) {
     const navigate = useNavigate();
     const [queue, setQueue] = useState([]);
-    const [roundTotal, setRoundTotal] = useState(0);
+    const [idx, setIdx] = useState(0);
 
     useEffect(() => {
-        if (Array.isArray(sortingStack) && sortingStack.length > 1 && queue.length === 0) {
+        if (Array.isArray(sortingStack) && sortingStack.length > 1) {
             const initialQueue = [];
             for (let i = 0; i < sortingStack.length; i++) {
                 for (let j = i + 1; j < sortingStack.length; j++) {
@@ -51,50 +51,41 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
                 }
             }
             setQueue(initialQueue);
-            setRoundTotal(initialQueue.length);
+            setIdx(0);
         }
     }, [sortingStack]);
 
-    const progress = roundTotal > 0
-        ? Math.round(((roundTotal - queue.length) / roundTotal) * 100)
-        : 0;
+    const total = queue.length;
+    const progress = total > 0 ? Math.round((idx / total) * 100) : 0;
 
     function handleSort(preferred) {
-        if (!Array.isArray(queue) || queue.length === 0) return;
-        const pair = queue[0];
+        const pair = queue[idx];
         if (!Array.isArray(pair) || pair.length < 2) return;
-        const left = pair[0];
-        const right = pair[1];
-        if (!left || !right) return;
-
+        const [left, right] = pair;
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
 
-        // Maintain rankings
-        const updatedRankings = [...rankedTracks];
-        if (!updatedRankings.find(t => t.uri === winner.uri)) updatedRankings.unshift(winner);
-        if (!updatedRankings.find(t => t.uri === loser.uri)) updatedRankings.push(loser);
-        setRankedTracks(updatedRankings);
+        const updated = [...rankedTracks];
+        if (!updated.find(t => t.uri === winner.uri)) updated.unshift(winner);
+        if (!updated.find(t => t.uri === loser.uri)) updated.push(loser);
+        setRankedTracks(updated);
 
-        // Advance queue
-        const remainingQueue = queue.slice(1);
-        setQueue(remainingQueue);
-
-        if (remainingQueue.length === 0) {
+        const nextIdx = idx + 1;
+        if (nextIdx >= queue.length) {
             setSortingStack([]);
             navigate("/result");
+        } else {
+            setIdx(nextIdx);
         }
     }
 
-    // Render loading if no valid pair
-    if (!Array.isArray(queue) || queue.length === 0) {
+    if (queue.length === 0) {
         return <Container>Loading sorting game...</Container>;
     }
 
-    const pair = queue[0];
-    const left = Array.isArray(pair) ? pair[0] : null;
-    const right = Array.isArray(pair) ? pair[1] : null;
-
+    const pair = queue[idx] || [];
+    const left = pair[0];
+    const right = pair[1];
     if (!left || !right) {
         return <Container>Preparing matchup...</Container>;
     }
