@@ -55,13 +55,17 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
 
     function handleSort(preferred) {
         if (!Array.isArray(queue[0]) || queue[0].length !== 2) return;
-        const [left, right] = queue[0];
+        const pair = queue[0];
+        const left = pair[0];
+        const right = pair[1];
+        if (!left || !right) return;
+
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
 
         const updatedRankings = [...rankedTracks];
-        if (!updatedRankings.includes(winner)) updatedRankings.unshift(winner);
-        if (!updatedRankings.includes(loser)) updatedRankings.push(loser);
+        if (!updatedRankings.find(t => t.uri === winner.uri)) updatedRankings.unshift(winner);
+        if (!updatedRankings.find(t => t.uri === loser.uri)) updatedRankings.push(loser);
 
         setRankedTracks(updatedRankings);
         const remainingQueue = queue.slice(1);
@@ -77,7 +81,8 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
         return <Container>Loading sorting game...</Container>;
     }
 
-    const [left, right] = queue[0];
+    const [left, right] = queue[0] || [];
+    if (!left || !right) return <Container>Preparing matchups...</Container>;
 
     return (
         <Container>
