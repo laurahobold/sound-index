@@ -70,12 +70,17 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
             return;
         }
 
-        const [left, right] = queue[idx] || [];
         if (!left || !right) {
             console.warn("Bad pair at idx", idx, queue[idx]);
             return;
         }
-
+        const pair = queue[idx];
+           console.log("handleSort ▶️", { idx, pair, queueLength: queue.length });
+           if (!Array.isArray(pair) || pair.length !== 2) {
+               console.error("🛑 Invalid pair at index", idx, pair);
+                 return;
+               }
+           const [left, right] = pair;
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
 
