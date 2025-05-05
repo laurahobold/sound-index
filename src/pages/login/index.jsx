@@ -44,16 +44,8 @@ async function generateCodeChallenge(codeVerifier) {
 export default function LoginPage({ token, setToken }) {
   const navigate = useNavigate();
 
+  // Only handle token exchange if ?code= is in the URL
   useEffect(() => {
-    // Check if token is already saved
-    const savedToken = localStorage.getItem("spotify_token");
-    if (savedToken && token === null) {
-      // Only restore token if not already logged in
-      setToken(savedToken);
-    }
-
-
-    // Look for code and exchange for token
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
     const storedVerifier = localStorage.getItem("code_verifier");
@@ -75,7 +67,6 @@ export default function LoginPage({ token, setToken }) {
         if (data.access_token) {
           localStorage.setItem("spotify_token", data.access_token);
           setToken(data.access_token);
-          navigate("/pick");
         } else {
           console.error("Token exchange failed:", data);
         }
@@ -83,6 +74,13 @@ export default function LoginPage({ token, setToken }) {
       .catch(err => console.error("Token fetch error:", err));
     }
   }, []);
+
+  // When token is set, navigate to /pick
+  useEffect(() => {
+    if (token) {
+      navigate("/pick");
+    }
+  }, [token]);
 
   function loginWithSpotify() {
     const verifier = generateCodeVerifier();
