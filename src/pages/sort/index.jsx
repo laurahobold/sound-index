@@ -1,12 +1,11 @@
 import styled from "styled-components";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
     padding: 2rem;
     text-align: center;
 `;
-
 const Button = styled.button`
     background-color: #1db954;
     color: white;
@@ -18,98 +17,117 @@ const Button = styled.button`
     cursor: pointer;
     &:disabled { background-color: #aaa; cursor: not-allowed; }
 `;
-
 const ProgressBar = styled.div`
-    width: 100%;
-    background: #ddd;
-    height: 10px;
-    border-radius: 5px;
-    margin-bottom: 1rem;
+    width: 100%; background: #ddd; height: 10px;
+    border-radius: 5px; margin-bottom: 1rem;
 `;
-
 const ProgressFill = styled.div`
-    background: #1db954;
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.3s ease;
+    background: #1db954; height: 100%;
+    border-radius: 5px; transition: width 0.3s ease;
 `;
 
-export default function SortPage({ sortingStack, setSortingStack, rankedTracks, setRankedTracks }) {
-    const navigate = useNavigate();
+// Fisher-Yates shuffle
+function shuffle(array) {
+    const arr = [...array];
+    let m = arr.length;
+    while (m) {
+        const i = Math.floor(Math.random() * m--);
+        [arr[m], arr[i]] = [arr[i], arr[m]];
+    }
+    return arr;
+}
 
-    // Build all unique track pairs
-    const queue = useMemo(() => {
-        if (!Array.isArray(sortingStack) || sortingStack.length < 2) return [];
-        const pairs = [];
-        for (let i = 0; i < sortingStack.length; i++) {
-            for (let j = i + 1; j < sortingStack.length; j++) {
-                pairs.push([sortingStack[i], sortingStack[j]]);
-            }
+export default function SortPage({ sortingStack, setSortingStack, setRankedTracks }) {
+    const navigate = useNavigate();
+    const n = Array.isArray(sortingStack) ? sortingStack.length : 0;
+    const totalPairs = n * (n - 1) / 2;
+
+    // State
+    const [optionsList, setOptionsList] = useState([]);
+    const [sortingIterations, setSortingIterations] = useState(0);
+    const [battleNum, setBattleNum] = useState(1);
+    const [firstIdx, setFirstIdx] = useState(0);
+    const [secondIdx, setSecondIdx] = useState(1);
+
+    // Initialize on mount
+    useEffect(() => {
+        if (n > 1) {
+            const shuffled = shuffle(sortingStack);
+            setOptionsList(shuffled);
+            setSortingIterations(shuffled.length - 1);
+            setBattleNum(1);
+            setFirstIdx(0);
+            setSecondIdx(1);
         }
-        return pairs;
     }, [sortingStack]);
 
-    // Index of current pair
-    const [idx, setIdx] = useState(0);
+    // Compute progress
+    const progress = totalPairs > 0
+        ? Math.round(((battleNum - 1) * 100) / totalPairs)
+        : 100;
 
-    // Reset idx whenever queue changes
-    useEffect(() => {
-        setIdx(0);
-    }, [queue]);
-
-    const total = queue.length;
-    const progress = total > 0 ? Math.round((idx / total) * 100) : 0;
-
-    // Handle user choice
-    const handleSort = useCallback(
-        (choice) => {
-            // Guard bounds
-            if (idx < 0 || idx >= queue.length) return;
-
-            const pair = queue[idx];
-            if (!Array.isArray(pair) || pair.length !== 2) return;
-
-            const [left, right] = pair;
-            const winner = choice === "left" ? left : right;
-            const loser = choice === "left" ? right : left;
-
-            // Update rankedTracks
-            const updated = [...rankedTracks];
-            if (!updated.some((t) => t.uri === winner.uri)) updated.unshift(winner);
-            if (!updated.some((t) => t.uri === loser.uri)) updated.push(loser);
-            setRankedTracks(updated);
-
-            const next = idx + 1;
-            if (next >= queue.length) {
-                setSortingStack([]);
-                navigate("/result");
-            } else {
-                setIdx(next);
-            }
-        },
-        [idx, queue, rankedTracks, setRankedTracks, setSortingStack, navigate]
-    );
-
-    if (queue.length === 0) {
-        return <Container>Loading sorting game...</Container>;
+    // Guard: loading
+    if (optionsList.length < 2) {
+        return <Container>Preparing sorting game...</Container>;
     }
 
-    const [left, right] = queue[idx] || [];
-    if (!left || !right) {
-        return <Container>Preparing matchup...</Container>;
+    const firstTrack = optionsList[firstIdx];
+    const secondTrack = optionsList[secondIdx];
+
+    function handleChoice(which) {
+        if (sortingIterations < 1) return;
+
+        // Determine new index to compare next
+        const maxInd = Math.max(firstIdx, secondIdx);
+        const newOptionInd = maxInd + 1 <= sortingIterations ? maxInd + 1 : 0;
+
+        const list = [...optionsList];
+        if (which === 'first') {
+            // if firstIdx > secondIdx, swap
+            if (firstIdx > secondIdx) {
+                [list[firstIdx], list[secondIdx]] = [list[secondIdx], list[firstIdx]];
+                setSecondIdx(firstIdx);
+            }
+            if (newOptionInd === 0) {
+                setFirstIdx(0);
+                setSecondIdx(1);
+                setSortingIterations(si => si - 1);
+            } else {
+                setFirstIdx(newOptionInd);
+            }
+        } else {
+            // clicked second
+            if (secondIdx > firstIdx) {
+                [list[firstIdx], list[secondIdx]] = [list[secondIdx], list[firstIdx]];
+                setFirstIdx(secondIdx);
+            }
+            if (newOptionInd === 0) {
+                setFirstIdx(0);
+                setSecondIdx(1);
+                setSortingIterations(si => si - 1);
+            } else {
+                setSecondIdx(newOptionInd);
+            }
+        }
+
+        setOptionsList(list);
+        setBattleNum(bn => bn + 1);
+
+        // Finish
+        if (sortingIterations - 1 <= 0) {
+            setRankedTracks(list);
+            setSortingStack([]);
+            navigate('/result');
+        }
     }
 
     return (
         <Container>
             <h2>Which song do you prefer?</h2>
-            <ProgressBar>
-                <ProgressFill style={{ width: `${progress}%` }} />
-            </ProgressBar>
-
-            <Button onClick={() => handleSort("left")}>{left.name}</Button>
-            <Button onClick={() => handleSort("right")}>{right.name}</Button>
-
-            <p style={{ marginTop: "1rem" }}>{progress}% completed</p>
+            <ProgressBar><ProgressFill style={{ width: `${progress}%` }} /></ProgressBar>
+            <Button onClick={() => handleChoice('first')}>{firstTrack.name}</Button>
+            <Button onClick={() => handleChoice('second')}>{secondTrack.name}</Button>
+            <p style={{ marginTop: '1rem' }}>{progress}% sorted</p>
         </Container>
     );
 }
