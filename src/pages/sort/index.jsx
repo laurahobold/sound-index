@@ -16,6 +16,10 @@ const Button = styled.button`
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
+    &:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+    }
 `;
 
 const ProgressBar = styled.div`
@@ -51,23 +55,27 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
         }
     }, [sortingStack]);
 
-    const progress = roundTotal > 0 ? Math.round(((roundTotal - queue.length) / roundTotal) * 100) : 0;
+    const progress = roundTotal > 0
+        ? Math.round(((roundTotal - queue.length) / roundTotal) * 100)
+        : 0;
 
     function handleSort(preferred) {
-        if (!Array.isArray(queue[0]) || queue[0].length !== 2) return;
+        if (!Array.isArray(queue) || queue.length === 0) return;
         const pair = queue[0];
-        const left = pair[0];
-        const right = pair[1];
+        if (!Array.isArray(pair) || pair.length !== 2) return;
+        const [left, right] = pair;
         if (!left || !right) return;
 
         const winner = preferred === "left" ? left : right;
         const loser = preferred === "left" ? right : left;
 
+        // Maintain rankings
         const updatedRankings = [...rankedTracks];
         if (!updatedRankings.find(t => t.uri === winner.uri)) updatedRankings.unshift(winner);
         if (!updatedRankings.find(t => t.uri === loser.uri)) updatedRankings.push(loser);
-
         setRankedTracks(updatedRankings);
+
+        // Advance queue
         const remainingQueue = queue.slice(1);
         setQueue(remainingQueue);
 
@@ -77,12 +85,12 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
         }
     }
 
-    if (!Array.isArray(queue[0]) || queue[0].length !== 2) {
+    // Render loading if no valid pair
+    if (!Array.isArray(queue) || queue.length === 0 || !Array.isArray(queue[0]) || queue[0].length !== 2) {
         return <Container>Loading sorting game...</Container>;
     }
 
-    const [left, right] = queue[0] || [];
-    if (!left || !right) return <Container>Preparing matchups...</Container>;
+    const [left, right] = queue[0];
 
     return (
         <Container>
@@ -91,8 +99,12 @@ export default function SortPage({ sortingStack, setSortingStack, rankedTracks, 
                 <ProgressFill style={{ width: `${progress}%` }} />
             </ProgressBar>
 
-            <Button onClick={() => handleSort("left")}>{left.name}</Button>
-            <Button onClick={() => handleSort("right")}>{right.name}</Button>
+            <Button onClick={() => handleSort("left")}>
+                {left.name}
+            </Button>
+            <Button onClick={() => handleSort("right")}>
+                {right.name}
+            </Button>
 
             <p style={{ marginTop: "1rem" }}>{progress}% completed</p>
         </Container>
