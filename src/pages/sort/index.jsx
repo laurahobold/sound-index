@@ -18,12 +18,17 @@ const Button = styled.button`
     &:disabled { background-color: #aaa; cursor: not-allowed; }
 `;
 const ProgressBar = styled.div`
-    width: 100%; background: #ddd; height: 10px;
-    border-radius: 5px; margin-bottom: 1rem;
+    width: 100%;
+    background: #ddd;
+    height: 10px;
+    border-radius: 5px;
+    margin-bottom: 1rem;
 `;
 const ProgressFill = styled.div`
-    background: #1db954; height: 100%;
-    border-radius: 5px; transition: width 0.3s ease;
+    background: #1db954;
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
 `;
 
 // Fisher-Yates shuffle
@@ -40,84 +45,79 @@ function shuffle(array) {
 export default function SortPage({ sortingStack, setSortingStack, setRankedTracks }) {
     const navigate = useNavigate();
     const n = Array.isArray(sortingStack) ? sortingStack.length : 0;
-    const totalPairs = n * (n - 1) / 2;
 
-    // State
-    const [optionsList, setOptionsList] = useState([]);
-    const [sortingIterations, setSortingIterations] = useState(0);
-    const [battleNum, setBattleNum] = useState(1);
-    const [firstIdx, setFirstIdx] = useState(0);
-    const [secondIdx, setSecondIdx] = useState(1);
+    // Full random order for insertion
+    const [order, setOrder] = useState([]);
+    // Sorted list being built
+    const [sortedList, setSortedList] = useState([]);
+    // Index of next item to insert
+    const [nextIndex, setNextIndex] = useState(1);
+    // Bounds for binary search insertion
+    const [low, setLow] = useState(0);
+    const [high, setHigh] = useState(0);
 
     // Initialize on mount
     useEffect(() => {
-        if (n > 1) {
+        if (n > 0) {
             const shuffled = shuffle(sortingStack);
-            setOptionsList(shuffled);
-            setSortingIterations(shuffled.length - 1);
-            setBattleNum(1);
-            setFirstIdx(0);
-            setSecondIdx(1);
+            setOrder(shuffled);
+            setSortedList([shuffled[0]]);
+            setNextIndex(1);
+            setLow(0);
+            setHigh(1);
         }
     }, [sortingStack]);
 
-    // Compute progress
-    const progress = totalPairs > 0
-        ? Math.round(((battleNum - 1) * 100) / totalPairs)
+    // Reset bounds when sortedList grows
+    useEffect(() => {
+        setLow(0);
+        setHigh(sortedList.length);
+    }, [sortedList]);
+
+    // Compute progress: percentage of items placed
+    const progress = n > 0
+        ? Math.round(((nextIndex) * 100) / n)
         : 100;
 
-    // Guard: loading
-    if (optionsList.length < 2) {
+    // If finished inserting all items, finalize
+    useEffect(() => {
+        if (n > 0 && nextIndex >= n) {
+            setRankedTracks(sortedList);
+            setSortingStack([]);
+            navigate('/result');
+        }
+    }, [nextIndex, n, sortedList, setRankedTracks, setSortingStack, navigate]);
+
+    // Guard for loading
+    if (order.length < 2 || sortedList.length === 0) {
         return <Container>Preparing sorting game...</Container>;
     }
 
-    const firstTrack = optionsList[firstIdx];
-    const secondTrack = optionsList[secondIdx];
+    const newTrack = order[nextIndex];
+    const mid = Math.floor((low + high) / 2);
+    const compareTrack = sortedList[mid];
 
-    function handleChoice(which) {
-        if (sortingIterations < 1) return;
+    function handleChoice(choice) {
+        if (nextIndex >= n) return;
 
-        // Determine new index to compare next
-        const maxInd = Math.max(firstIdx, secondIdx);
-        const newOptionInd = maxInd + 1 <= sortingIterations ? maxInd + 1 : 0;
-
-        const list = [...optionsList];
-        if (which === 'first') {
-            // if firstIdx > secondIdx, swap
-            if (firstIdx > secondIdx) {
-                [list[firstIdx], list[secondIdx]] = [list[secondIdx], list[firstIdx]];
-                setSecondIdx(firstIdx);
-            }
-            if (newOptionInd === 0) {
-                setFirstIdx(0);
-                setSecondIdx(1);
-                setSortingIterations(si => si - 1);
-            } else {
-                setFirstIdx(newOptionInd);
-            }
+        // Update bounds
+        if (choice === 'left') {
+            // User prefers newTrack over compareTrack => newTrack should come before => insert in [low, mid]
+            setHigh(mid);
         } else {
-            // clicked second
-            if (secondIdx > firstIdx) {
-                [list[firstIdx], list[secondIdx]] = [list[secondIdx], list[firstIdx]];
-                setFirstIdx(secondIdx);
-            }
-            if (newOptionInd === 0) {
-                setFirstIdx(0);
-                setSecondIdx(1);
-                setSortingIterations(si => si - 1);
-            } else {
-                setSecondIdx(newOptionInd);
-            }
+            // User prefers compareTrack => newTrack goes after => insert in [mid+1, high]
+            setLow(mid + 1);
         }
 
-        setOptionsList(list);
-        setBattleNum(bn => bn + 1);
-
-        // Finish
-        if (sortingIterations - 1 <= 0) {
-            setRankedTracks(list);
-            setSortingStack([]);
-            navigate('/result');
+        // Check if bounds converged
+        const newLow = choice === 'left' ? low : low;
+        const newHigh = choice === 'left' ? mid : high;
+        if (newLow >= newHigh) {
+            // Insert at position newLow
+            const updated = [...sortedList];
+            updated.splice(newLow, 0, newTrack);
+            setSortedList(updated);
+            setNextIndex(idx => idx + 1);
         }
     }
 
@@ -125,8 +125,8 @@ export default function SortPage({ sortingStack, setSortingStack, setRankedTrack
         <Container>
             <h2>Which song do you prefer?</h2>
             <ProgressBar><ProgressFill style={{ width: `${progress}%` }} /></ProgressBar>
-            <Button onClick={() => handleChoice('first')}>{firstTrack.name}</Button>
-            <Button onClick={() => handleChoice('second')}>{secondTrack.name}</Button>
+            <Button onClick={() => handleChoice('left')}>{newTrack.name}</Button>
+            <Button onClick={() => handleChoice('right')}>{compareTrack.name}</Button>
             <p style={{ marginTop: '1rem' }}>{progress}% sorted</p>
         </Container>
     );
