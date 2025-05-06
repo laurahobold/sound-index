@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import {useState, useEffect, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -52,7 +52,16 @@ export default function SortPage({ sortingStack, setSortingStack, setRankedTrack
     // total number of pairwise comparisons
     const totalBattles = n > 1 ? (n * (n - 1)) / 2 : 0;
     const progress = totalBattles > 0 ? Math.round(((battleNum - 1) * 100) / totalBattles) : 100;
-
+    const initialize = useCallback(() => {
+        if (n > 1) {
+            const shuffled = shuffle(sortingStack);
+            setOptionsList(shuffled);
+            setRemaining(shuffled.length - 1);
+            setBattleNum(1);
+            setFirstIdx(0);
+            setSecondIdx(1);
+        }
+    }, [sortingStack, n]);
     // initialize on mount
     useEffect(() => {
         if (n > 1) {
@@ -127,6 +136,10 @@ export default function SortPage({ sortingStack, setSortingStack, setRankedTrack
             <ProgressBar><ProgressFill style={{ width: `${progress}%` }} /></ProgressBar>
             <Button onClick={() => handleChoice(true)}>{a.name}</Button>
             <Button onClick={() => handleChoice(false)}>{b.name}</Button>
+            <div>
+                <Button onClick={initialize}>Restart</Button>
+
+            </div>
             <p style={{ marginTop: '1rem' }}>{progress}% sorted</p>
         </Container>
     );
