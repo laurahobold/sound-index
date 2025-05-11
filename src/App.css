@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'MS Sans Serif';
-  src: url('/public/assets/fonts/MS Sans Serif.ttf') format('truetype');
+  src: url('/public/fonts/MS Sans Serif.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Dreamer';
-  src: url('/public/assets/fonts/DreamerTM-Regular.ttf') format('truetype');
+  src: url('/public/fonts/DreamerTM-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
