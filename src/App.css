@@ -1,8 +1,21 @@
+@font-face {
+  font-family: 'MS Sans Serif';
+  src: url('/public/assets/fonts/MS Sans Serif.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Dreamer';
+  src: url('/public/assets/fonts/DreamerTM-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #0d60b7;
 }
 
 .logo {

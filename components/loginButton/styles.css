@@ -1,0 +1,53 @@
+.slide-arrow-button {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid white;
+    background-color: white;
+    border-radius: 999px;
+    padding: 0.5rem 2rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.slide-arrow-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    border-radius: 999px;
+    background-color: var(--primary-color);
+    transition: width 0.2s ease-in-out;
+}
+
+.slide-arrow-button:hover .slide-arrow-fill {
+    width: 100%;
+}
+
+.slide-arrow-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-right: 0.75rem;
+    color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.slide-arrow-label {
+    position: relative;
+    left: 1rem;
+    z-index: 10;
+    white-space: nowrap;
+    padding: 0 1rem;
+    color: black;
+    transition: all 0.2s ease-in-out;
+}
+
+.slide-arrow-button:hover .slide-arrow-label {
+    left: -0.75rem;
+    color: white;
+}

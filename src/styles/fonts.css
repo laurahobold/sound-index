@@ -1,0 +1,99 @@
+@font-face {
+    font-family: 'MS Sans Serif';
+    src: url('public/assets/fonts/MS Sans Serif.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Dreamer */
+@font-face {
+    font-family: 'Dreamer';
+    src: url('public/assets/fonts/DreamerTM-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* PF Pixelscript Pro */
+@font-face {
+    font-family: 'PF Pixelscript Pro';
+    src: url('public/assets/fonts/PFPixelscriptPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Moonbase Alpha Medium */
+@font-face {
+    font-family: 'Moonbase Alpha Medium';
+    src: url('public/assets/fonts/MoonbaseAlpha Medium/MoonbaseAlpha Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Moonbase Alpha Regular */
+@font-face {
+    font-family: 'Moonbase Alpha Regular';
+    src: url('public/assets/fonts/MoonbaseAlpha Regular/MoonbaseAlpha Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+/* Romantic */
+@font-face {
+    font-family: 'Romantic';
+    src: url('public/assets/fonts/ROMANTIC.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Space Grotesk – Light */
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('public/assets/fonts/SpaceGrotesk-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Space Grotesk – Regular */
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('public/assets/fonts/SpaceGrotesk-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Space Grotesk – Medium */
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('public/assets/fonts/SpaceGrotesk-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* Space Grotesk – SemiBold */
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('public/assets/fonts/SpaceGrotesk-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* Space Grotesk – Bold */
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('public/assets/fonts/SpaceGrotesk-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Space Grotesk – Variable (optional, if used instead of specific weights) */
+@font-face {
+    font-family: 'Space Grotesk Variable';
+    src: url('public/assets/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+    font-weight: 300 700;
+    font-style: normal;
+}/* Space Grotesk – Variable (optional, if used instead of specific weights) */
+@font-face {
+    font-family: 'Blaster';
+    src: url('public/assets/fonts/Blaster Display Font.ttf') format('truetype');
+    font-weight: 300 500;
+    font-style: normal;
+}

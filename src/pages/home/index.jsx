@@ -1,21 +1,15 @@
+// Home.jsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button, Text, Theme } from "@radix-ui/themes";
+import '@radix-ui/themes/styles.css';
+import GibberishText from "../../../components/title/index.jsx";
+import WaveReveal from "../../../components/title/index.jsx";
+import SlideArrowButton from "../../../components/loginButton/index.jsx";
 import styled from "styled-components";
+import {ActionButtons, Description, GettingStarted, Hero, LearnMore} from "./styles.module.js";
+import GetStartedButton from "../../../components/button/index.jsx";
 
-const Container = styled.div`
-  padding: 2rem;
-  text-align: center;
-`;
-
-const Button = styled.button`
-  background-color: #1db954;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-`;
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const redirectUri = import.meta.env.VITE_REDIRECT_URI;
@@ -27,27 +21,25 @@ const scopes = [
 
 function generateCodeVerifier(length = 128) {
   const array = new Uint32Array(length);
-  window.crypto.getRandomValues(array);
+  crypto.getRandomValues(array);
   return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('').slice(0, length);
 }
 
-async function generateCodeChallenge(codeVerifier) {
+async function generateCodeChallenge(verifier) {
   const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
-  const digest = await window.crypto.subtle.digest("SHA-256", data);
+  const data = encoder.encode(verifier);
+  const digest = await crypto.subtle.digest("SHA-256", data);
   return btoa(String.fromCharCode(...new Uint8Array(digest)))
   .replace(/\+/g, "-")
   .replace(/\//g, "_")
   .replace(/=+$/, "");
 }
 
-export default function LoginPage({ token, setToken }) {
+export default function Home({ token, setToken }) {
   const navigate = useNavigate();
 
-  // Only handle token exchange if ?code= is in the URL
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
+    const code = new URLSearchParams(window.location.search).get("code");
     const storedVerifier = localStorage.getItem("code_verifier");
 
     if (code && storedVerifier) {
@@ -67,44 +59,58 @@ export default function LoginPage({ token, setToken }) {
         if (data.access_token) {
           localStorage.setItem("spotify_token", data.access_token);
           setToken(data.access_token);
-        } else {
-          console.error("Token exchange failed:", data);
         }
-      })
-      .catch(err => console.error("Token fetch error:", err));
+      });
     }
   }, []);
 
-  // When token is set, navigate to /pick
   useEffect(() => {
-    if (token) {
-      navigate("/pick");
-    }
+    if (token) navigate("/pick");
   }, [token]);
 
   function loginWithSpotify() {
     const verifier = generateCodeVerifier();
     generateCodeChallenge(verifier).then(challenge => {
       localStorage.setItem("code_verifier", verifier);
-      const params = new URLSearchParams({
+      const authUrl = new URL("https://accounts.spotify.com/authorize");
+      authUrl.search = new URLSearchParams({
         client_id: clientId,
         response_type: "code",
         redirect_uri: redirectUri,
         code_challenge_method: "S256",
         code_challenge: challenge,
         scope: scopes.join(" ")
-      });
-      window.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
+      }).toString();
+      window.location.href = authUrl.toString();
     });
   }
 
-  return (
-      <Container>
+  return (<Hero>
+        <WaveReveal
+            text="Bop Hierarchy"
+            direction="up"
+            mode="letter"
+            delay={100}
+            duration="1600ms"
+            blur={true}
+        />
+        <GettingStarted>
+        <Description>
+              {/*1. Click "Login with Spotify"<br />*/}
+              {/*2. Authorize the app<br />*/}
+              {/*3. Choose a playlist<br />*/}
+              {/*4. Rank and save it*/}
+          Swipe, sort, and settle the score. A fun way to rank your favorite tracks, one choice at a time.
+        </Description>
+          <ActionButtons>
         {!token ? (
-            <Button onClick={loginWithSpotify}>Login with Spotify</Button>
+            <GetStartedButton onClick={loginWithSpotify}></GetStartedButton>
         ) : (
-            <p>Redirecting...</p>
+            <Text>Redirecting...</Text>
         )}
-      </Container>
+            <LearnMore onClick={() => navigate('/about')}>Learn More</LearnMore>
+          </ActionButtons>
+        </GettingStarted>
+    </Hero>
   );
 }
