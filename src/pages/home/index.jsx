@@ -104,7 +104,7 @@ export default function Home({ token, setToken }) {
         </Description>
           <ActionButtons>
         {!token ? (
-            <GetStartedButton onClick={loginWithSpotify}></GetStartedButton>
+            <SlideArrowButton onClick={loginWithSpotify}></SlideArrowButton>
         ) : (
             <Text>Redirecting...</Text>
         )}
