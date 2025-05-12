@@ -21,37 +21,6 @@ export default function Layout({ children, token }) {
 				window.open("https://github.com/laurahobold", "_blank");
 
 		return ( <PageWrapper>
-				{/*<Root>*/}
-				{/*		<List>*/}
-				{/*				{token && (*/}
-				{/*						<Item>*/}
-				{/*								<NavigationMenu.Link asChild>*/}
-				{/*										<Button onClick={handleLogout}>Logout</Button>*/}
-				{/*								</NavigationMenu.Link>*/}
-				{/*						</Item>*/}
-				{/*				)}*/}
-				{/*				{token && (*/}
-				{/*						<Item>*/}
-				{/*								<NavigationMenu.Link asChild>*/}
-				{/*										<Button onClick={handlePick}>Pick Playlist</Button>*/}
-				{/*								</NavigationMenu.Link>*/}
-				{/*						</Item>*/}
-				{/*				)}*/}
-				{/*				{location.pathname === "/sort" && (*/}
-				{/*						<Item>*/}
-				{/*								<NavigationMenu.Link asChild>*/}
-				{/*										<Button onClick={handleRestart}>Restart Sort</Button>*/}
-				{/*								</NavigationMenu.Link>*/}
-				{/*						</Item>*/}
-				{/*				)}*/}
-				{/*				<Item>*/}
-				{/*						<NavigationMenu.Link asChild>*/}
-				{/*								<Button onClick={handleCredits}>Credits</Button>*/}
-				{/*						</NavigationMenu.Link>*/}
-				{/*				</Item>*/}
-				{/*		</List>*/}
-				{/*		<NavigationMenu.Viewport />*/}
-				{/*</Root>*/}
 				<Root>
 						<Logo onClick={() => navigate('/')}>Bop Hierarchy</Logo>
 						<List>

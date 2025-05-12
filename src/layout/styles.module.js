@@ -9,8 +9,8 @@ export const PageWrapper = styled.div`
     height: 100vh;
 		width: 100vw;
     font-family: "Space Grotesk", sans-serif;
-    //background-image: url('/src/assets/blurgradient-1746746299205.png') !important;
-padding:2rem;
+overflow: hidden;
+		padding:2rem;
 `;
 
 export const ContentWrapper = styled.div`

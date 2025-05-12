@@ -1,26 +1,118 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import "./styles.css"; // import the CSS
+import styled from "styled-components"; // import the CSS
 
+const Container = styled.div`
+  min-height: 3rem;   /* 48px */
+  width: 12rem;       /* 192px */
+`
+const Button = styled.button`
+    display: flex;
+    height: 3rem; /* 48px */
+    width: 14rem; /* 160px */
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem; /* 12px */
+    border-radius: 0.5rem;
+		background-color: #1a1a1a;
+    padding: 0.5rem; /* 8px */
+    font-weight: bold;
+    transition: background-color 0.1s ease-in-out;
+
+    &:hover {
+        background-color: #f1d6f5; /* orange-600 */
+    }
+`
+const Text = styled.span`
+    color: #f1d6f5; /* amber-100 */
+
+  transition: color 0.1s ease-in-out;
+
+  ${Button}:hover & {
+      color: #1a1a1a;  /* orange-600 */
+
+  }
+`
+
+const IconOuter = styled.div`
+  position: relative;
+  display: flex;
+  height: 2rem;  /* 28px */
+  width: 2rem;   /* 28px */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+    background-color: #f1d6f5; /* amber-100 */
+
+    transition: background-color 0.1s ease-in-out;
+
+  ${Button}:hover & {
+      background-color: #1a1a1a; /* orange-600 */
+
+  }
+`
+
+const IconInner = styled.div`
+  position: absolute;
+  left: 0;
+  display: flex;
+  height: 2rem;  /* 28px */
+  width: 3.5rem;    /* 56px */
+  transform: translateX(-50%);
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+
+  ${Button}:hover & {
+    transform: translateX(0);
+  }
+`
+
+const ArrowPrimary = styled(ArrowRight)`
+  padding: 0.5rem; /* 4px */
+
+  color: #f1d6f5;   /* orange-600 */
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+
+  ${Button}:hover & {
+    opacity: 1;
+  }
+`
+
+const ArrowSecondary = styled(ArrowRight)`
+  padding: 0.25rem; /* 4px */
+    color: #1a1a1a;  /* orange-600 */
+
+    opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+
+  ${Button}:hover & {
+    opacity: 0;
+  }
+`
 export default function SlideArrowButton({
 		text = "Login with Spotify",
 		primaryColor = "#1DB954",
 		...props
 }) {
 		return (
-				<button
-						className={`slide-arrow-button`}
-						style={{ "--primary-color": primaryColor }}
+				<Container>
+
+				<Button
 						{...props}
 				>
-						<div className="slide-arrow-fill">
-        <span className="slide-arrow-icon">
-          <SpotifyIcon />
-          <ArrowRight size={10} />
-        </span>
-						</div>
-						<span className="slide-arrow-label">{text}</span>
-				</button>
+						<IconOuter>
+								<IconInner>
+										<ArrowPrimary size={18} />
+										<ArrowSecondary size={18} />
+								</IconInner>
+						</IconOuter>
+						<Text>{text}</Text>
+				</Button>
+				</Container>
+
 		);
 }
 

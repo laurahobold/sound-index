@@ -4,10 +4,6 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { ArrowRight } from 'lucide-react'
 
-const Container = styled.div`
-  min-height: 3rem;   /* 48px */
-  width: 12rem;       /* 192px */
-`
 
 const Button = styled.button`
     display: flex;
@@ -27,14 +23,7 @@ const Button = styled.button`
     }
 `
 
-const Text = styled.span`
-  color: #1a1a1a;  /* orange-600 */
-  transition: color 0.1s ease-in-out;
 
-  ${Button}:hover & {
-    color: #f1d6f5; /* amber-100 */
-  }
-`
 
 const IconOuter = styled.div`
   position: relative;
@@ -95,7 +84,6 @@ function GetStartedButton({ text = 'Login with Spotify', className }) {
 		return (
 				<Container>
 						<Button className={className}>
-								<Text>{text}</Text>
 								<IconOuter>
 										<IconInner>
 												<ArrowPrimary size={18} />
