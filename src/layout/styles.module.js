@@ -10,13 +10,13 @@ export const PageWrapper = styled.div`
 		width: 100vw;
     font-family: "Space Grotesk", sans-serif;
 overflow: hidden;
-		padding:2rem;
 `;
 
 export const ContentWrapper = styled.div`
 //height:100vh;
 		margin: auto;
-		//padding: 1rem;
+		width: 100%;
+    //overflow: scroll !important;
 `;
 
 export const TaskBarWrapper = styled.div`
@@ -33,7 +33,6 @@ import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 // Styled Components (short + correct context)
 export const Root = styled(NavigationMenu.Root)`
     display: flex;
-		position: absolute;
     align-items: center;
     justify-content: space-between;
     padding: 1rem 2rem;
@@ -59,7 +58,7 @@ export const Link = styled(NavigationMenu.Link)`
 `;
 
 export const Logo = styled.div`
-    font-family: 'Dreamer', cursive;
-    font-size: 1.5rem;
+    font-family: 'Blaster', cursive;
+    font-size: 1rem;
     cursor: pointer;
 `;

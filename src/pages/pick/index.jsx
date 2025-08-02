@@ -1,52 +1,9 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {Card, Cover, PlaylistGrid, SearchInput, Title, Container, SectionTitle, ContainerHeader} from "./styles.module.js";
 
-const Container = styled.div`
-    padding: 2rem;
-`;
 
-const SearchInput = styled.input`
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-`;
-
-const PlaylistGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-`;
-
-const Card = styled.div`
-  background: #fafafa;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  cursor: pointer;
-  transition: transform 0.2s;
-  &:hover { transform: translateY(-4px); }
-`;
-
-const Cover = styled.img`
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background: #eee;
-`;
-
-const Title = styled.div`
-  padding: 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
 
 export default function PickPage({ token, setSelectedTracks, setSortingStack, setRankedTracks }) {
 		const navigate = useNavigate();
@@ -104,18 +61,19 @@ export default function PickPage({ token, setSelectedTracks, setSortingStack, se
 
 		return (
 				<Container>
-						<h2>Your Playlists</h2>
-						<SearchInput
-								type="text"
-								placeholder="Search playlists..."
-								value={searchTerm}
-								onChange={e => setSearchTerm(e.target.value)}
-						/>
+						<ContainerHeader><SectionTitle>Pick your playlist</SectionTitle>
+								<SearchInput
+										type="text"
+										placeholder="Search playlists..."
+										value={searchTerm}
+										onChange={e => setSearchTerm(e.target.value)}
+								/></ContainerHeader>
+
 						<PlaylistGrid>
 								{filtered.map(pl => (
 										<Card key={pl.id} onClick={() => handleSelect(pl.id)}>
 												<Cover
-														src={pl.images[0]?.url || ""}
+														src={pl.images && pl.images.length > 0 ? pl.images[0].url : ""}
 														alt={pl.name}
 												/>
 												<Title>{pl.name}</Title>

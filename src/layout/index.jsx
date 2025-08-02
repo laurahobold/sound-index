@@ -5,6 +5,7 @@ import {useNavigate, useLocation} from "react-router-dom";
 import {PageWrapper, ContentWrapper, List, Link, Root, Logo, Item} from "./styles.module.js";
 import VantaBackground from "../../components/background/index.jsx";
 import {Button} from "@radix-ui/themes";
+import texts from "../texts/text.js";
 
 export default function Layout({ children, token }) {
 		const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function Layout({ children, token }) {
 
 		return ( <PageWrapper>
 				<Root>
-						<Logo onClick={() => navigate('/')}>Bop Hierarchy</Logo>
+						<Logo onClick={() => navigate('/')}>{texts.main.title}</Logo>
 						<List>
 								<Item>
 										<Link asChild>

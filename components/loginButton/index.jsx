@@ -4,19 +4,16 @@ import styled from "styled-components"; // import the CSS
 
 const Container = styled.div`
   min-height: 3rem;   /* 48px */
-  width: 12rem;       /* 192px */
 `
 const Button = styled.button`
     display: flex;
     height: 3rem; /* 48px */
-    width: 14rem; /* 160px */
     align-items: center;
     justify-content: center;
     gap: 0.75rem; /* 12px */
     border-radius: 0.5rem;
 		background-color: #1a1a1a;
-    padding: 0.5rem; /* 8px */
-    font-weight: bold;
+    padding: 0.9rem; /* 8px */
     transition: background-color 0.1s ease-in-out;
 
     &:hover {

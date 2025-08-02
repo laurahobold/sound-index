@@ -129,3 +129,18 @@ export const BgLightGridGradient2 = styled.div`
     background-image: radial-gradient(circle 500px at 50% 200px, #C9EBFF, transparent);
   }
 `;
+
+export const BgDarkGradient1 = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -2;
+  height: 100vh;
+  width: 100vw;
+  background-color: #0a0a0a;
+  background-image: radial-gradient(
+    ellipse 80% 80% at 50% -20%,
+    rgba(120, 119, 198, 0.3),
+    rgba(255, 255, 255, 0)
+  );
+`;
