@@ -4,7 +4,6 @@ import {fonts} from "../styles/theme.js";
 import {BarChart} from "lucide-react";
 import Marquee from "react-fast-marquee";
 import theme from "../../src/styles/theme.js";
-import logo from "../assets/img_3.png";
 import {RiSoundModuleFill} from "react-icons/ri";
 
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
