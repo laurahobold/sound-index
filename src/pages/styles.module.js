@@ -2,7 +2,6 @@ import styled from "styled-components";
 import {Button} from "antd";
 import theme, {fonts} from "../styles/theme.js";
 import {vars} from "../layout/styles.module.js";
-import image from "../assets/girl.png"
 
 export const Hero = styled.div`
     //;  max-width: 1300px;
