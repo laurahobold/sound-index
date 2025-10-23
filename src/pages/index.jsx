@@ -120,9 +120,7 @@ export default function Home ({
 								{/*		<Accent $shimmer>data freak</Accent>—right here.*/}
 								{/*</Title>*/}
 								<Col>
-										<Title>
-
-												The venn diagram of music nerd and data freak - <b>right here</b>.
+										<Title>Tools for people who overthink playlists - <b>right here</b>.
 										</Title>
 										<ActionButtons>
 												{!hasToken && !isBusy ? (
