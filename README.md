@@ -1,4 +1,5 @@
-# Sound Index
+# Sound Index 
+[![wakatime](https://wakatime.com/badge/user/50afa9a3-cda1-4676-953f-200674aa1687/project/de0ef7d6-4e7f-4fc3-ad44-a7e8315e8285.svg)](https://wakatime.com/badge/user/50afa9a3-cda1-4676-953f-200674aa1687/project/de0ef7d6-4e7f-4fc3-ad44-a7e8315e8285)
 
 Sound Index is a digital toolkit for self‑aware Spotify listeners. Built with React and Vite, it lets you sort, rank,
 and organize your music library right in the browser. Authentication uses the Spotify Web API with PKCE — no server or
