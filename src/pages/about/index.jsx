@@ -17,12 +17,6 @@ function AboutPage () {
 								insights about your listening habits. Whether you’re a casual listener or a playlist curator, Sound
 								Index makes it easy and fun to sort and share your musical taste.
 						</p>
-						<LogoText>s☺und index</LogoText> {/* original */}
-						<LogoText $style="duoGradient">s☺und index</LogoText>
-						<LogoText $style="inkOutline">s☺und index</LogoText>
-						<LogoText $style="sticker">sound index</LogoText>
-						<LogoText $style="tape">s☺und index</LogoText>
-						<LogoText $style="pill">s☺und index</LogoText>
 				</section>
 		</Wrapper> );
 }
